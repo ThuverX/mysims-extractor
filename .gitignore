@@ -1,0 +1,4 @@
+assets/*
+output/*
+lib/vgmstream-win/*
+!lib/vgmstream-win/.gitkeep

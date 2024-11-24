@@ -1,0 +1,7 @@
+{
+	"deno.enable": true,
+	"files.associations": {
+		"*.world": "xml",
+		"stdlib.h": "c"
+	}
+}
