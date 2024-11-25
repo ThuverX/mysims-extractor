@@ -20,14 +20,51 @@ struct Vertex3 {
     Vector2 uv;
 };
 
+struct Vertex4 {
+    Vector3 position;
+    padding[16];
+    Vector3 normal;
+};
+
+struct Vertex6 {
+    Vector3 position;
+    padding[16];
+    Vector3 normal;
+    Vector2 uv;
+    Vector2 uv2;
+};
+
+struct Vertex5 {
+    Vector3 position;
+    padding[16];
+    Vector3 normal;
+    Vector2 uv;
+};
+
 struct Face {
     u16 a;
     u16 b;
     u16 c;
 };
 
+struct Bone {
+    padding[48];
+    float x;
+    float y;
+    float z;
+    padding[4];
+};
+
+struct Rig {
+    u32 num_bones;
+    u32 bone_hashes[num_bones];
+};
+
 struct Mesh {
-    padding[68];
+    u32 material_hash;
+    padding[8];
+    u32 group_hash;
+    padding[52];
     u32 num_verts;
     u32 num_faces;
     u32 vert_type;
@@ -36,15 +73,30 @@ struct Mesh {
         padding[21];
         u32 verts_size;
         Vertex3 vertices[num_verts];
+    } else if(vert_type == 4) {
+        padding[28];
+        u32 verts_size;
+        Vertex4 vertices[num_verts];
+    } else if(vert_type == 5) {
+        padding[35];
+        u32 verts_size;
+        Vertex5 vertices[num_verts];
+    } else if(vert_type == 6) {
+        padding[42];
+        u32 verts_size;
+        Vertex6 vertices[num_verts];
     }
 
     u32 faces_size;
     Face faces[num_faces];
-    padding[4];
+    u32 FFFFFFFF;
 };
 
 struct Header {
-    padding[33];
+    u8 version;
+    char magic[6];
+    u16 blank;
+    padding[24];
 
     u32 num_extra_params;
     u32 param_ids[num_extra_params];
@@ -55,7 +107,7 @@ struct Header {
         padding[1];
     }
     u32 num_rigs;
-    // the rigs
+    Rig rigs[num_rigs];
     u32 num_meshes;
     Mesh meshes[num_meshes];
 };

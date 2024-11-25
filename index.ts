@@ -99,6 +99,10 @@ import { assetspath, load } from './exporters/extract.ts'
 import { hash } from './util.ts'
 import { DBPF } from './format/dbpf.ts'
 import { Buffer } from 'node:buffer'
+import Long from 'https://deno.land/x/long@v1.0.0/mod.ts'
+import { getHashValue32 } from './hashes.ts'
+
+// await loadHashesTable('./strings.txt')
 
 function StartWorker(
 	params: ThreadedExtractorParameter,
@@ -125,6 +129,7 @@ function StartWorker(
 // 			filepath: file.name,
 // 			clean: true,
 // 			convert: true,
+// 			keep_original: false,
 // 		})
 // 	}
 // }
@@ -132,17 +137,25 @@ function StartWorker(
 // const file = await load('X:/dbpfsims/output/Characters.package/0x1a0a520.bnk')
 
 // StartWorker({
-// 	filepath: 'Textures.package',
+// 	filepath: 'Levels.package',
 // 	clean: true,
 // 	convert: true,
 // })
 
-const dbpf = new DBPF(await load('./assets/Textures.package'))
+const dbpf = new DBPF(await load('./assets/Levels.package'))
 
-console.log(dbpf.getIndicesOfType('Material').map((x) => x.group))
-console.log(
-	dbpf.getIndicesByGroup(1446324147).map((x) => x.getEntry().serialize()),
-)
+const model = dbpf.getIndices().find((x) => x.type == 'WindowsModel')
+const model_parts = dbpf.getIndicesByGroup(model?.group!)
+console.log(model_parts.map((x) => [x.type, hash(x.hash)]))
+console.log(hash(model?.group!) + '.' + hash(model?.hash!))
+console.log(hash(model?.offset!))
+
+console.log(getHashValue32('0x01D0E75D'))
+
+// console.log(dbpf.getIndicesOfType('Material').map((x) => x.group))
+// console.log(
+// 	dbpf.getIndicesByGroup(1446324147).map((x) => x.getEntry().serialize()),
+// )
 /*
 
 Index {

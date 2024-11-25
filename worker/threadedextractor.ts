@@ -1,5 +1,6 @@
 import { parentPort } from 'node:worker_threads'
 import { extract } from '../exporters/extract.ts'
+import { loadHashesTable } from '../hashes.ts'
 
 export interface ThreadedExtractorParameter {
 	filepath: string
@@ -16,6 +17,7 @@ export interface ThreadedExtractorResult {
 parentPort?.on('message', async (
 	params: ThreadedExtractorParameter,
 ) => {
+	await loadHashesTable('./strings.txt')
 	if (params == undefined) {
 		return {
 			num_files: 0,

@@ -3,6 +3,7 @@ import { BinReader } from 'jsr:@exts/binutils'
 import { IndexType } from '../index.ts'
 import { hash, hex } from '../../util.ts'
 import { Vector3 } from '../windowsmodel/windowsmodel.ts'
+import { getHashValue32 } from '../../hashes.ts'
 
 /*
 enum FileType : u32 {
@@ -117,6 +118,19 @@ const MaterialParameterType = {
 	0x2A20E51B: 'alphaMap',
 	0xF46B90AE: 'shadowReceiver',
 	0xB2649C2F: 'blendmode',
+	0x05D22FD3: 'transparency',
+	0x04A5DAA3: 'ambient',
+	0x637DAA05: 'diffuse',
+	0xD1F4CB96: 'greenChannelMultiplier',
+	0x7BB10C17: 'blueChannelMultiplier',
+	0x99BF82F6: 'redChannelMultiplier',
+	0x689AEFFE: 'nightTint',
+	0xFBBBB5C2: 'dayTint',
+	0x1D17D10F: 'overbrightDay',
+	0xDB88EC28: 'negativeColorBiasNight',
+	0x29214C0C: 'negativeColorBiasDay',
+	0xB779F79B: 'overbrightNight',
+	0xBF2AD9B3: 'specularColor',
 	0x988403F9: 'ukn',
 } as const
 
@@ -208,6 +222,17 @@ class MaterialParameter {
 		] ||
 			'ukn'
 
+		if (this.type == 'ukn') {
+			const name_value = getHashValue32(this.raw_type)
+			if (name_value != undefined) {
+				console.log(
+					`Found name value for material data param: ${
+						hash(this.raw_type)
+					} "${name_value}"`,
+				)
+			}
+		}
+
 		this.bf.position += 8
 		this.offset = this.bf.readUInt32()
 
@@ -260,6 +285,8 @@ class MaterialParameter {
 				break
 			case 'highlightMultiplier':
 			case 'blendmode':
+			case 'transparency':
+			case 'ambient':
 			case 'ukn':
 			default:
 				// console.log(`Unknown param type: ${hex(this.raw_type)}`)

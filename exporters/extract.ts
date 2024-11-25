@@ -58,15 +58,21 @@ export async function extract(
 				}
 			} catch (e) {
 				console.log(
-					`ERROR: ${hash(index.hash)} couldn't be converted ${e}`,
+					`ERROR: ${hash(index.group)}.${
+						hash(index.hash)
+					} couldn't be converted ${e}`,
 				)
 			}
 		}
 
-		const outfilename = `${hash(index.hash)}.${file_type}`
+		const outfilename = `${hash(index.group)}.${
+			hash(index.hash)
+		}.${file_type}`
 		const fulloutpath = join(outpath_file, outfilename)
 
-		const outfilename_og = `${hash(index.hash)}._og.${index.type}`
+		const outfilename_og = `${hash(index.group)}.${
+			hash(index.hash)
+		}._og.${index.type}`
 		const fulloutpath_og = join(outpath_file, outfilename_og)
 
 		if (!existsSync(fulloutpath)) {
