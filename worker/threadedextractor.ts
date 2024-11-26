@@ -1,12 +1,13 @@
 import { parentPort } from 'node:worker_threads'
-import { extract } from '../exporters/extract.ts'
-import { loadHashesTable } from '../hashes.ts'
+import { extract } from '../export/extract.ts'
+import { HASHES_32, loadHashesFromTables, loadHashesTable } from '../hashes.ts'
 
 export interface ThreadedExtractorParameter {
 	filepath: string
 	clean?: boolean
 	convert?: boolean
 	keep_original?: boolean
+	hashes: [Record<string, string>, Record<string, string>]
 }
 
 export interface ThreadedExtractorResult {
@@ -17,7 +18,7 @@ export interface ThreadedExtractorResult {
 parentPort?.on('message', async (
 	params: ThreadedExtractorParameter,
 ) => {
-	await loadHashesTable('./strings.txt')
+	await loadHashesFromTables(params.hashes)
 	if (params == undefined) {
 		return {
 			num_files: 0,

@@ -76,9 +76,9 @@ export async function extract(
 		const fulloutpath_og = join(outpath_file, outfilename_og)
 
 		if (!existsSync(fulloutpath)) {
-			Deno.writeFileSync(fulloutpath, data)
+			await Deno.writeFile(fulloutpath, data)
 			if (keep_original) {
-				Deno.writeFileSync(fulloutpath_og, og_data)
+				await Deno.writeFile(fulloutpath_og, og_data)
 			}
 
 			num_files_extracted++

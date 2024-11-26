@@ -4,6 +4,7 @@ import Long from 'https://deno.land/x/long@v1.0.0/mod.ts'
 import { IndexHeader } from './indexheader.ts'
 import { Serializer } from '../serializer.ts'
 import { hash } from '../util.ts'
+import { DBPF } from './dbpf.ts'
 export const IndexType = {
 	0x01661233: 'Model',
 	0xf9e50586: 'RevoModel',
@@ -106,6 +107,7 @@ export class Index implements Serializer {
 	constructor(
 		private bf: BinReader,
 		private header: IndexHeader,
+		private dbpf: DBPF,
 	) {
 		if (!this.header.flags.includes('resource_type')) {
 			this.raw_type = this.bf.readUInt32()
@@ -234,6 +236,7 @@ export class Index implements Serializer {
 		return new Entry(
 			this.bf,
 			this,
+			this.dbpf,
 		)
 	}
 }

@@ -168,8 +168,13 @@ export class Rig {
 export class Mesh {
 	public vertices: Array<Vertex> = []
 	public faces: Array<Face> = []
+	public material_hash: number
+	public group_hash: number
 	constructor(private bf: BinReader) {
-		this.bf.position += 68
+		this.material_hash = this.bf.readUInt32()
+		this.bf.position += 8
+		this.group_hash = this.bf.readUInt32()
+		this.bf.position += 52
 		const num_verts = this.bf.readUInt32()
 		const num_faces = this.bf.readUInt32()
 		const vertex_type = this.bf.readUInt32()

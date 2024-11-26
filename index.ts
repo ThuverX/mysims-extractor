@@ -95,14 +95,21 @@ import {
 	ThreadedExtractorParameter,
 	ThreadedExtractorResult,
 } from './worker/threadedextractor.ts'
-import { assetspath, load } from './exporters/extract.ts'
+import { assetspath, load } from './export/extract.ts'
 import { hash } from './util.ts'
 import { DBPF } from './format/dbpf.ts'
 import { Buffer } from 'node:buffer'
 import Long from 'https://deno.land/x/long@v1.0.0/mod.ts'
-import { getHashValue32 } from './hashes.ts'
+import {
+	getHashValue32,
+	getHashValue64,
+	HASHES_32,
+	HASHES_64,
+	loadHashesTable,
+} from './hashes.ts'
+import { GameModel } from './export/model/GameModel.ts'
 
-// await loadHashesTable('./strings.txt')
+await loadHashesTable('./strings.txt')
 
 function StartWorker(
 	params: ThreadedExtractorParameter,
@@ -126,6 +133,7 @@ function StartWorker(
 // 	if (file.name === 'Face-baked.package') continue
 // 	if (file.isFile) {
 // 		StartWorker({
+//             hashes: [HASHES_32, HASHES_64],
 // 			filepath: file.name,
 // 			clean: true,
 // 			convert: true,
@@ -134,59 +142,18 @@ function StartWorker(
 // 	}
 // }
 
-// const file = await load('X:/dbpfsims/output/Characters.package/0x1a0a520.bnk')
+StartWorker({
+	hashes: [HASHES_32, HASHES_64],
+	filepath: 'Objects.package',
+	clean: true,
+	convert: true,
+})
 
-// StartWorker({
-// 	filepath: 'Levels.package',
-// 	clean: true,
-// 	convert: true,
-// })
+// const dbpf = new DBPF(await load('./assets/Objects.package'))
 
-const dbpf = new DBPF(await load('./assets/Levels.package'))
+// const data = await new GameModel(
+// 	dbpf.getIndexByGroupAndHash(0x98DD2593, 1)!.getEntry(),
+// 	dbpf,
+// ).get()
 
-const model = dbpf.getIndices().find((x) => x.type == 'WindowsModel')
-const model_parts = dbpf.getIndicesByGroup(model?.group!)
-console.log(model_parts.map((x) => [x.type, hash(x.hash)]))
-console.log(hash(model?.group!) + '.' + hash(model?.hash!))
-console.log(hash(model?.offset!))
-
-console.log(getHashValue32('0x01D0E75D'))
-
-// console.log(dbpf.getIndicesOfType('Material').map((x) => x.group))
-// console.log(
-// 	dbpf.getIndicesByGroup(1446324147).map((x) => x.getEntry().serialize()),
-// )
-/*
-
-Index {
-  bf: BinReader {
-    buffer: <Buffer 44 42 50 46 02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 3f 03 00 00 00 00 00 00 ec 5a 00 00 00 00 ... >
-  },
-  type: "dds",
-  raw_type: 11720834,
-  offset: 1752448,
-  group: -1,
-  file_size: 5632,
-  mem_size: 5632,
-  compressed: false,
-  hash: Long { low: 101152737, high: 0, unsigned: true }
-}
-*/
-
-// function rev(str: string) {
-// 	return str.match(/.{1,2}/g)!.reverse().join('')
-// }
-
-// console.log(
-// 	dbpf.getIndexAtHash('0xCBBF10F600000000')
-// 		?.serialize(),
-// )
-
-// console.log(Long.fromString('10A2C633F0000000', true, 16))
-
-// console.log(dbpf.getIndicesByGroup(0x510129EC).map((x) => x.serialize()))
-
-// console.log(dbpf.getIndicesOfType('WindowsModel').map((x) => hash(x.group)))
-// const str = 'flairSymbolRose'
-
-// console.log(hash(FNV.fromString32('diffuseMap')))
+// Deno.writeFileSync('./test.glb', data)

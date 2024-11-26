@@ -23,11 +23,13 @@ export function bitFlags<T extends Record<string, number>>(
 	return turnedOn
 }
 
-export function hash(num: number | Long, pad: boolean = true): string {
+export function hash(num: number | Long, pad?: number): string {
 	if (num instanceof Long) {
-		return `0x` + num.toString(16).padStart(pad ? 16 : 0, '0').toUpperCase()
+		return `0x` +
+			num.toString(16).padStart(pad ?? 16, '0').toUpperCase()
 	} else {
-		return `0x` + num.toString(16).padStart(pad ? 8 : 0, '0').toUpperCase()
+		return `0x` +
+			num.toString(16).padStart(pad ?? 8, '0').toUpperCase()
 	}
 }
 

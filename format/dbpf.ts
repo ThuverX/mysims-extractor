@@ -97,9 +97,9 @@ export class DBPF {
 		return this.indexheader.values[idx]
 	}
 
-	public getIndexAtHash(hashv: string | Long): Index | undefined {
+	public getIndexAtHash(hashv: Long | number): Index | undefined {
 		return this.indexheader.values.find((x) =>
-			hash(x.hash) === (hashv instanceof Long ? hash(hashv) : hashv)
+			hash(x.hash, 16) === hash(hashv, 16)
 		)
 	}
 
@@ -107,6 +107,21 @@ export class DBPF {
 		type: (typeof IndexType)[keyof typeof IndexType],
 	): Array<Index> {
 		return this.indexheader.values.filter((x) => x.type === type)
+	}
+
+	public getIndexByGroupAndHash(group: number, hashv: Long | number) {
+		return this.indexheader.values.find((x) =>
+			x.group == group && hash(x.hash, 16) === hash(hashv, 16)
+		)
+	}
+
+	public getIndexByTypeAndHash(
+		type: (typeof IndexType)[keyof typeof IndexType],
+		hashv: Long | number,
+	) {
+		return this.indexheader.values.find((x) =>
+			x.type == type && hash(x.hash, 16) === hash(hashv, 16)
+		)
 	}
 
 	public getIndicesByGroup(group: number) {

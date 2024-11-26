@@ -8,6 +8,7 @@
     "jsr:@std/io@*": "0.225.0",
     "jsr:@std/streams@*": "1.0.8",
     "npm:@gltf-transform/core@*": "4.1.0",
+    "npm:@imagemagick/magick-wasm@0.0.31": "0.0.31",
     "npm:@types/node@*": "22.5.4"
   },
   "jsr": {
@@ -40,6 +41,9 @@
         "property-graph"
       ]
     },
+    "@imagemagick/magick-wasm@0.0.31": {
+      "integrity": "sha512-QNivAUxSaItuiY8ziI/vRy6TtoecD7TOsD1LGZCG3wv8lfbdGbIj2QiJk0FlGkGwAVR966NlD3mkxPNvQrvq0w=="
+    },
     "@types/node@22.5.4": {
       "integrity": "sha512-FDuKUJQm/ju9fT/SeX/6+gBzoPzlVCzfzmGkwKvRHQVxi4BntVbyIwf6a4Xn62mrvndLiml6z/UBXIdEVjQLXg==",
       "dependencies": [
@@ -55,6 +59,7 @@
   },
   "redirects": {
     "https://deno.land/std/path/mod.ts": "https://deno.land/std@0.224.0/path/mod.ts",
+    "https://deno.land/x/imagemagick_deno/mod.ts": "https://deno.land/x/imagemagick_deno@0.0.31/mod.ts",
     "https://esm.sh/@gltf-transform/core": "https://esm.sh/@gltf-transform/core@4.1.0"
   },
   "remote": {
@@ -151,6 +156,7 @@
     "https://deno.land/std@0.224.0/path/windows/resolve.ts": "8dae1dadfed9d46ff46cc337c9525c0c7d959fb400a6308f34595c45bdca1972",
     "https://deno.land/std@0.224.0/path/windows/to_file_url.ts": "40e560ee4854fe5a3d4d12976cef2f4e8914125c81b11f1108e127934ced502e",
     "https://deno.land/std@0.224.0/path/windows/to_namespaced_path.ts": "4ffa4fb6fae321448d5fe810b3ca741d84df4d7897e61ee29be961a6aac89a4c",
+    "https://deno.land/x/imagemagick_deno@0.0.31/mod.ts": "124d7f045429f6e6c486b86e72d025410d09576bc0d8075e69f97118a1a33413",
     "https://deno.land/x/long@v1.0.0/mod.ts": "cc01904f22a9e1739d37e3ae666857277ca2684adc9a70453917013cff41c547",
     "https://esm.sh/@gltf-transform/core@4.1.0": "99c15806e1ea4cfd2806c74046c0a9e8b8bf7a5115a5b3a71f4324ee7fd0f0d6",
     "https://esm.sh/v135/@gltf-transform/core@4.1.0/denonext/core.mjs": "95a41e3f889701d02a685c27002f74900e6ee85ca4b34ab6643e3462ec559020",

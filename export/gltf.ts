@@ -1,19 +1,41 @@
 import { Buffer } from 'node:buffer'
-import type { WindowsModel } from '../format/windowsmodel/windowsmodel.ts'
 import {
 	DenoIO,
 	Document,
 	Node,
 } from 'https://esm.sh/@gltf-transform/core@4.1.0'
+import { GameModel } from './model/GameModel.ts'
+
+import {
+	ImageMagick,
+	IMagickImage,
+	initialize,
+	MagickFormat,
+} from 'https://deno.land/x/imagemagick_deno@0.0.31/mod.ts'
+
+export function DDS2PNG(data: Buffer): Promise<Buffer> {
+	return new Promise((res, rej) => {
+		ImageMagick.read(data, (img: IMagickImage) => {
+			img.write(
+				MagickFormat.Png,
+				(data: Uint8Array) => res(Buffer.from(data)),
+			)
+		})
+	})
+}
 
 export class GLTFExporter {
 	private document = new Document()
-	constructor(private wmodel: WindowsModel) {
+	constructor(private game_model: GameModel) {
+	}
+
+	public async convert() {
+		await initialize()
 		const buffer = this.document.createBuffer()
 
-		const nodes: Array<Node> = []
+		const rootNode = this.document.createNode('node')
 
-		for (const mesh of this.wmodel.meshes) {
+		for (const mesh of this.game_model.meshes) {
 			const indicesArray = new Uint16Array(
 				mesh.faces.map((f) => [f.a, f.b, f.c]).flat(),
 			)
@@ -27,6 +49,18 @@ export class GLTFExporter {
 					(v) => [v.position.x, v.position.y, v.position.z],
 				).flat(),
 			)
+
+			const normalArray = new Float32Array(
+				mesh.vertices.map(
+					(v) => [v.normal.x, v.normal.y, v.normal.z],
+				).flat(),
+			)
+
+			const normal = this.document
+				.createAccessor()
+				.setArray(new Float32Array(normalArray))
+				.setType('VEC3')
+				.setBuffer(buffer)
 
 			const position = this.document
 				.createAccessor()
@@ -46,7 +80,12 @@ export class GLTFExporter {
 				.setType('VEC2')
 				.setBuffer(buffer)
 
+			const texture = this.document.createTexture()
+				.setImage(await DDS2PNG(mesh.material.textures['diffuseMap']))
+				.setMimeType('image/png')
+
 			const material = this.document.createMaterial()
+				.setBaseColorTexture(texture)
 				.setBaseColorFactor([1, 1, 1, 1])
 				.setRoughnessFactor(1)
 				.setMetallicFactor(0)
@@ -55,26 +94,25 @@ export class GLTFExporter {
 				.createPrimitive()
 				.setMaterial(material)
 				.setIndices(indices)
+				.setAttribute('NORMAL', normal)
 				.setAttribute('POSITION', position)
 				.setAttribute('TEXCOORD_0', texcoord)
 			const outMesh = this.document.createMesh('mesh')
 				.addPrimitive(prim)
 
-			nodes.push(
+			rootNode.addChild(
 				this.document.createNode('node')
 					.setMesh(outMesh)
 					.setTranslation([0, 0, 0]),
 			)
 		}
 
-		const scene = this.document.createScene('scene')
-
-		for (const node of nodes) {
-			scene.addChild(node)
-		}
+		this.document.createScene(this.game_model.id + '.scene')
+			.addChild(rootNode)
 	}
 
 	public async export(filepath: string) {
+		await this.convert()
 		const io = new DenoIO(filepath)
 		const data = await io.writeBinary(this.document)
 		await Deno.writeFile(filepath, data)
@@ -83,6 +121,7 @@ export class GLTFExporter {
 	}
 
 	public async get() {
+		await this.convert()
 		const io = new DenoIO(this.document)
 		const data = await io.writeBinary(this.document)
 

@@ -2,3 +2,6 @@ assets/*
 output/*
 lib/vgmstream-win/*
 !lib/vgmstream-win/.gitkeep
+strings.txt
+hashes_32.db
+hashes_64.db

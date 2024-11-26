@@ -1,11 +1,11 @@
 import { Buffer } from 'node:buffer'
 import { BinReader } from 'jsr:@exts/binutils'
 import { Index, TextTypes } from './index.ts'
-import { WindowsModel } from './windowsmodel/windowsmodel.ts'
-import { GLTFExporter } from '../exporters/gltf.ts'
 import { Bnk } from './bnk/bnk.ts'
 import { MaterialData } from './materials/materialdata.ts'
 import { Serializer } from '../serializer.ts'
+import { GameModel } from '../export/model/GameModel.ts'
+import { DBPF } from './dbpf.ts'
 
 export class Entry implements Serializer {
 	public data: Buffer
@@ -13,6 +13,7 @@ export class Entry implements Serializer {
 	constructor(
 		private bf: BinReader,
 		private index: Index,
+		private dbpf: DBPF,
 	) {
 		this.bf.position = index.offset
 		const data = this.bf.readBytes(index.mem_size)
@@ -36,12 +37,11 @@ export class Entry implements Serializer {
 	public async convert(): Promise<[string, Buffer] | null> {
 		switch (this.index.type) {
 			case 'WindowsModel': {
-				const windowsModel = new WindowsModel(new BinReader(this.data))
-				const gltf = new GLTFExporter(windowsModel)
+				const game_model = new GameModel(this, this.dbpf)
 
 				return [
 					'glb',
-					await gltf.get(),
+					await game_model.get(),
 				]
 			}
 			case 'CompositeTexture': {

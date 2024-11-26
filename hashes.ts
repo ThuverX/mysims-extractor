@@ -18,6 +18,8 @@ async function loadHashesFromCache(): Promise<void> {
 		`Loading hashes from cache: ${HASH32_CACHE_PATH}, ${HASH64_CACHE_PATH}`,
 	)
 
+	const start = performance.now()
+
 	const file_32 = await Deno.readTextFile(HASH32_CACHE_PATH)
 	const lines_32 = file_32.split('\n').filter((x) => x.length > 0)
 
@@ -38,7 +40,11 @@ async function loadHashesFromCache(): Promise<void> {
 		HASHES_64[hash] = value
 	}
 
-	console.log(`Loaded ${Object.keys(HASHES_32).length} hashes`)
+	console.log(
+		`Loaded ${Object.keys(HASHES_32).length} hashes in ${
+			performance.now() - start
+		}ms`,
+	)
 }
 
 async function writeHashesToCache(): Promise<void> {
@@ -87,6 +93,13 @@ export function getHashValue(hashv: string | Long) {
 	const value = hashv instanceof Long ? hash(hashv) : hashv
 
 	return getHashValue32(value) || getHashValue64(value)
+}
+
+export function loadHashesFromTables(
+	tables: [Record<string, string>, Record<string, string>],
+) {
+	HASHES_32 = tables[0]
+	HASHES_64 = tables[1]
 }
 
 export async function loadHashesTable(

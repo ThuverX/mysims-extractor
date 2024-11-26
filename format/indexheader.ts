@@ -47,7 +47,7 @@ export class IndexHeader {
 		}
 
 		for (let i = 0; i < this.dbpf.index_entry_count; i++) {
-			this.values.push(new Index(this.bf, this))
+			this.values.push(new Index(this.bf, this, this.dbpf))
 		}
 
 		this.log_type()
