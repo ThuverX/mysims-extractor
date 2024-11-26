@@ -1,7 +1,7 @@
 import Long from 'https://deno.land/x/long@v1.0.0/mod.ts'
 import { BinReader } from 'jsr:@exts/binutils'
 import { IndexType } from '../index.ts'
-import { hash, hex } from '../../util.ts'
+import { hash } from '../../util.ts'
 import { Vector3 } from '../windowsmodel/windowsmodel.ts'
 import { getHashValue32 } from '../../hashes.ts'
 
@@ -131,7 +131,36 @@ const MaterialParameterType = {
 	0x29214C0C: 'negativeColorBiasDay',
 	0xB779F79B: 'overbrightNight',
 	0xBF2AD9B3: 'specularColor',
-	0x988403F9: 'ukn',
+	0x2CE11842: 'specular',
+	0x988403F9: 'transparent',
+	0xAB26E148: 'vNormalWaveSpeed',
+	0xF303D152: 'emissionMap',
+	0xDB319586: 'vReflectionWaveSpeed',
+	0x3C45E334: 'normalMapScale',
+	0xA2E40EAB: 'jitterScale',
+	0x02937388: 'waveFrequency',
+	0x50E0193B: 'uReflectionWaveSpeed',
+	0x2A93BAFB: 'waterColorBlue',
+	0x5916ED3E: 'baseAlpha',
+	0xE460597B: 'reflectionSharpness',
+	0x933E38F4: 'intensity',
+	0x11EFE2FD: 'waveAmplitude',
+	0x7FD42F11: 'noiseFrequency',
+	0xBD237B0D: 'ShinyPower',
+	0x2E18B549: 'VspeedLayer2',
+	0xDB5EBEE7: 'warpAmp',
+	0x2E18B54B: 'VspeedLayer0',
+	0x2E18B54A: 'VspeedLayer1',
+	0x7EEA0C2B: 'UspeedLayer1',
+	0x7EEA0C2A: 'UspeedLayer0',
+	0x7EEA0C28: 'UspeedLayer2',
+	0xD552A779: 'reflectionIntensity',
+	0xB32A1342: 'reflectionAmount',
+	0x9F63578D: 'uNormalWaveSpeed',
+	0xF72FCA9B: 'diffuseAlpha',
+	0x7490C750: 'contrastSubtractColor',
+	0x6612378C: 'contrastMultiplyColor',
+	0x0: 'ukn',
 } as const
 
 interface ExtraParamInfo {
