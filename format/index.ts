@@ -3,7 +3,7 @@ import { Entry } from './entry.ts'
 import Long from 'https://deno.land/x/long@v1.0.0/mod.ts'
 import { IndexHeader } from './indexheader.ts'
 import { Serializer } from '../serializer.ts'
-import { hash } from '../util.ts'
+import { hash_tostring } from '../util.ts'
 import { DBPF } from './dbpf.ts'
 export const IndexType = {
 	0x01661233: 'Model',
@@ -228,7 +228,7 @@ export class Index implements Serializer {
 			file_size: this.file_size,
 			mem_size: this.file_size,
 			compressed: this.compressed,
-			hash: hash(this.hash),
+			hash: hash_tostring(this.hash),
 		}
 	}
 

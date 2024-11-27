@@ -1,6 +1,6 @@
 import Long from 'https://deno.land/x/long@v1.0.0/mod.ts'
 import { FNV } from './format/fnv/fnv.ts'
-import { hash } from './util.ts'
+import { hash_tostring } from './util.ts'
 import { Buffer } from 'node:buffer'
 
 export const HASH32_CACHE_PATH = 'hashes_32.db'
@@ -75,22 +75,22 @@ async function hashesExist(): Promise<boolean> {
 
 export function getHashValue32(hashv: string | Long | number) {
 	const value = (hashv instanceof Long)
-		? hash(hashv.toNumber())
+		? hash_tostring(hashv.toNumber())
 		: typeof hashv == 'number'
-		? hash(hashv)
+		? hash_tostring(hashv)
 		: hashv
 
 	return HASHES_32[value.slice(0, 2 + 8)]
 }
 
 export function getHashValue64(hashv: string | Long) {
-	const value = hashv instanceof Long ? hash(hashv) : hashv
+	const value = hashv instanceof Long ? hash_tostring(hashv) : hashv
 
 	return HASHES_32[value.slice(0, 2 + 16)]
 }
 
 export function getHashValue(hashv: string | Long) {
-	const value = hashv instanceof Long ? hash(hashv) : hashv
+	const value = hashv instanceof Long ? hash_tostring(hashv) : hashv
 
 	return getHashValue32(value) || getHashValue64(value)
 }
@@ -123,8 +123,8 @@ export async function loadHashesTable(
 	HASHES_64 = {}
 
 	for (const line of lines) {
-		HASHES_32[hash(FNV.fromString32(line))] = line
-		HASHES_64[hash(FNV.fromString64(line))] = line
+		HASHES_32[hash_tostring(FNV.fromString32(line))] = line
+		HASHES_64[hash_tostring(FNV.fromString64(line))] = line
 	}
 
 	console.log(`Loaded ${Object.keys(HASHES_32).length} hashes`)

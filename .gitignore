@@ -5,3 +5,6 @@ lib/vgmstream-win/*
 strings.txt
 hashes_32.db
 hashes_64.db
+*.env
+*.json
+*.glb

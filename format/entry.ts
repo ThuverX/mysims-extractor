@@ -4,7 +4,7 @@ import { Index, TextTypes } from './index.ts'
 import { Bnk } from './bnk/bnk.ts'
 import { MaterialData } from './materials/materialdata.ts'
 import { Serializer } from '../serializer.ts'
-import { GameModel } from '../export/model/GameModel.ts'
+import { GameModel } from '../game/model/GameModel.ts'
 import { DBPF } from './dbpf.ts'
 
 export class Entry implements Serializer {

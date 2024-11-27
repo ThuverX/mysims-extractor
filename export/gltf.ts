@@ -4,7 +4,7 @@ import {
 	Document,
 	Node,
 } from 'https://esm.sh/@gltf-transform/core@4.1.0'
-import { GameModel } from './model/GameModel.ts'
+import { GameModel } from '../game/model/GameModel.ts'
 
 import {
 	ImageMagick,

@@ -1,7 +1,7 @@
 import Long from 'https://deno.land/x/long@v1.0.0/mod.ts'
 import { BinReader } from 'jsr:@exts/binutils'
 import { IndexType } from '../index.ts'
-import { hash } from '../../util.ts'
+import { hash_tostring } from '../../util.ts'
 import { Vector3 } from '../windowsmodel/windowsmodel.ts'
 import { getHashValue32 } from '../../hashes.ts'
 
@@ -187,7 +187,7 @@ export class TextureParamInfo implements ExtraParamInfo {
 
 	public json() {
 		return {
-			ref_hash: hash(this.ref_hash),
+			ref_hash: hash_tostring(this.ref_hash),
 			ref_type: this.ref_type,
 		}
 	}
@@ -256,7 +256,7 @@ class MaterialParameter {
 			if (name_value != undefined) {
 				console.log(
 					`Found name value for material data param: ${
-						hash(this.raw_type)
+						hash_tostring(this.raw_type)
 					} "${name_value}"`,
 				)
 			}

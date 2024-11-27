@@ -10,7 +10,7 @@ import {
 import { Buffer } from 'node:buffer'
 import { MaterialData } from '../../format/materials/materialdata.ts'
 import { TextureParamInfo } from '../../format/materials/materialdata.ts'
-import { GLTFExporter } from '../gltf.ts'
+import { GLTFExporter } from '../../export/gltf.ts'
 
 class GameModelMaterial {
 	private mat: MaterialData

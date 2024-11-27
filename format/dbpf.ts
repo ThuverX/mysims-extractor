@@ -1,8 +1,7 @@
 import type { BinReader } from 'jsr:@exts/binutils'
 import assert from 'node:assert'
-import { hash, hex } from '../util.ts'
+import { compare_hash, HashLike, hex } from '../util.ts'
 import { IndexHeader } from './indexheader.ts'
-import Long from 'https://deno.land/x/long@v1.0.0/mod.ts'
 import { Index } from './index.ts'
 import { IndexType } from './index.ts'
 
@@ -41,9 +40,9 @@ export class DBPF {
 
 	public indexheader: IndexHeader
 
-	constructor(private bf: BinReader) {
+	constructor(private bf: BinReader, private debug: boolean = true) {
 		this.magic = this.bf.readBytes(4).toString('ascii')
-		assert(this.magic == 'DBPF')
+		assert(this.magic == 'DBPF', 'Invalid magic, expected DBPF')
 
 		this.major_version = this.bf.readUInt32()
 		this.minor_version = this.bf.readUInt32()
@@ -68,12 +67,12 @@ export class DBPF {
 		this.bf.position += 4
 		this.bf.position += 24
 
-		assert(this.bf.position == 96)
+		assert(this.bf.position == 96, 'Invalid DBPF header size')
 
-		this.log_versions()
-		this.log_stats()
+		if (this.debug) this.log_versions()
+		if (this.debug) this.log_stats()
 
-		this.indexheader = new IndexHeader(this)
+		this.indexheader = new IndexHeader(this, this.debug)
 	}
 
 	public getReader() {
@@ -84,23 +83,22 @@ export class DBPF {
 		return this.indexheader.values
 	}
 
-	public findIndex(
-		hash: Long,
-		type: (typeof IndexType)[keyof typeof IndexType],
+	public getIndexAtHash(
+		hash: HashLike,
 	): Index | undefined {
-		return this.indexheader.values.find((x) =>
-			x.hash.equals(hash) && x.type === type
-		)
+		return this.indexheader.values.find((x) => compare_hash(x.hash, hash))
+	}
+
+	public findIndex(predicate: (index: Index) => boolean) {
+		return this.indexheader.values.find(predicate)
+	}
+
+	public filterIndex(predicate: (index: Index) => boolean) {
+		return this.indexheader.values.filter(predicate)
 	}
 
 	public getIndex(idx: number): Index {
 		return this.indexheader.values[idx]
-	}
-
-	public getIndexAtHash(hashv: Long | number): Index | undefined {
-		return this.indexheader.values.find((x) =>
-			hash(x.hash, 16) === hash(hashv, 16)
-		)
 	}
 
 	public getIndicesOfType(
@@ -109,18 +107,21 @@ export class DBPF {
 		return this.indexheader.values.filter((x) => x.type === type)
 	}
 
-	public getIndexByGroupAndHash(group: number, hashv: Long | number) {
+	public getIndexByGroupAndHash(
+		group: number,
+		hash: HashLike,
+	) {
 		return this.indexheader.values.find((x) =>
-			x.group == group && hash(x.hash, 16) === hash(hashv, 16)
+			x.group == group && compare_hash(x.hash, hash)
 		)
 	}
 
 	public getIndexByTypeAndHash(
 		type: (typeof IndexType)[keyof typeof IndexType],
-		hashv: Long | number,
+		hash: HashLike,
 	) {
 		return this.indexheader.values.find((x) =>
-			x.type == type && hash(x.hash, 16) === hash(hashv, 16)
+			x.type == type && compare_hash(x.hash, hash)
 		)
 	}
 

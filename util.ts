@@ -1,5 +1,8 @@
 import Long from 'https://deno.land/x/long@v1.0.0/mod.ts'
 import type { BinReader } from 'jsr:@exts/binutils'
+import { readdir } from 'node:fs'
+import { join } from 'node:path'
+import { FNV } from './format/fnv/fnv.ts'
 
 export function hex(num: number) {
 	const hexNum = num.toString(16)
@@ -23,7 +26,7 @@ export function bitFlags<T extends Record<string, number>>(
 	return turnedOn
 }
 
-export function hash(num: number | Long, pad?: number): string {
+export function hash_tostring(num: number | Long, pad?: number): string {
 	if (num instanceof Long) {
 		return `0x` +
 			num.toString(16).padStart(pad ?? 16, '0').toUpperCase()
@@ -53,4 +56,24 @@ export function swap32(val: number) {
 
 export function swap16(val: number) {
 	return ((val & 0xff) << 8) | ((val >> 8) & 0xff)
+}
+
+export type HashLike = string | bigint | number | Long
+
+export function create_hash(value: HashLike): bigint {
+	if (value instanceof Long) return BigInt(value.toString())
+	else if (typeof value === 'number') {
+		return BigInt(value)
+	} else if (typeof value === 'bigint') {
+		return value
+	} else {
+		return BigInt(FNV.fromString64(value).toString())
+	}
+}
+
+export function compare_hash(
+	a: HashLike,
+	b: HashLike,
+): boolean {
+	return create_hash(a) === create_hash(b)
 }

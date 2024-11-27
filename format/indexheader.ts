@@ -25,7 +25,7 @@ export class IndexHeader {
 	public entry_instance_hi?: number
 	public entry_instance_lo?: number
 
-	constructor(private dbpf: DBPF) {
+	constructor(private dbpf: DBPF, private debug: boolean) {
 		this.bf = new BinReader(dbpf.getReader().buffer)
 
 		this.bf.position = this.dbpf.index_offset
@@ -50,7 +50,7 @@ export class IndexHeader {
 			this.values.push(new Index(this.bf, this, this.dbpf))
 		}
 
-		this.log_type()
+		if (this.debug) this.log_type()
 
 		// switch (this.index_type) {
 		// 	case 0: {

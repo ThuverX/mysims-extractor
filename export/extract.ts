@@ -3,7 +3,7 @@ import { Buffer } from 'node:buffer'
 import { DBPF } from '../format/dbpf.ts'
 import { join } from 'node:path'
 import { existsSync } from 'node:fs'
-import { hash } from '../util.ts'
+import { hash_tostring } from '../util.ts'
 
 export const assetspath = './assets/'
 export const outpath = './output'
@@ -58,20 +58,20 @@ export async function extract(
 				}
 			} catch (e) {
 				console.log(
-					`ERROR: ${hash(index.group)}.${
-						hash(index.hash)
+					`ERROR: ${hash_tostring(index.group)}.${
+						hash_tostring(index.hash)
 					} couldn't be converted ${e}`,
 				)
 			}
 		}
 
-		const outfilename = `${hash(index.group)}.${
-			hash(index.hash)
+		const outfilename = `${hash_tostring(index.group)}.${
+			hash_tostring(index.hash)
 		}.${file_type}`
 		const fulloutpath = join(outpath_file, outfilename)
 
-		const outfilename_og = `${hash(index.group)}.${
-			hash(index.hash)
+		const outfilename_og = `${hash_tostring(index.group)}.${
+			hash_tostring(index.hash)
 		}._og.${index.type}`
 		const fulloutpath_og = join(outpath_file, outfilename_og)
 

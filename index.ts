@@ -95,39 +95,52 @@ import {
 	ThreadedExtractorParameter,
 	ThreadedExtractorResult,
 } from './worker/threadedextractor.ts'
-import { assetspath, load } from './export/extract.ts'
-import { hash } from './util.ts'
+// import { assetspath, load } from './export/extract.ts'
+// import { hash } from './util.ts'
+// import { DBPF } from './format/dbpf.ts'
+// import { Buffer } from 'node:buffer'
+// import Long from 'https://deno.land/x/long@v1.0.0/mod.ts'
+// import {
+// 	getHashValue32,
+// 	getHashValue64,
+// 	HASHES_32,
+// 	HASHES_64,
+// 	loadHashesTable,
+// } from './hashes.ts'
+// import { GameModel } from './game/model/GameModel.ts'
+// import { WorldDef } from './format/world/worldDef.ts'
+// import { join } from 'node:path'
+import { Game } from './game/Game.ts'
+import 'jsr:@std/dotenv/load'
 import { DBPF } from './format/dbpf.ts'
+import { load } from './export/extract.ts'
+import { compare_hash, create_hash, hash_tostring } from './util.ts'
+import { loadHashesTable } from './hashes.ts'
+import { FNV } from './format/fnv/fnv.ts'
+import { WorldXML } from './game/xml/worldxml.ts'
+import { hash } from 'node:crypto'
+import { LevelXML } from './game/xml/LevelXML.ts'
+import { writeFileSync } from 'node:fs'
 import { Buffer } from 'node:buffer'
-import Long from 'https://deno.land/x/long@v1.0.0/mod.ts'
-import {
-	getHashValue32,
-	getHashValue64,
-	HASHES_32,
-	HASHES_64,
-	loadHashesTable,
-} from './hashes.ts'
-import { GameModel } from './export/model/GameModel.ts'
+// await loadHashesTable('./strings.txt')
 
-await loadHashesTable('./strings.txt')
+// function StartWorker(
+// 	params: ThreadedExtractorParameter,
+// ) {
+// 	const worker = new Worker(
+// 		new URL('./worker/threadedextractor.ts', import.meta.url).href,
+// 		{
+// 			stdout: false,
+// 			stderr: false,
+// 		},
+// 	)
+// 	worker.postMessage(params)
 
-function StartWorker(
-	params: ThreadedExtractorParameter,
-) {
-	const worker = new Worker(
-		new URL('./worker/threadedextractor.ts', import.meta.url).href,
-		{
-			stdout: false,
-			stderr: false,
-		},
-	)
-	worker.postMessage(params)
-
-	worker.on('message', (msg: ThreadedExtractorResult) => {
-		console.log(`Extracted ${msg.num_files} files`)
-		worker.terminate()
-	})
-}
+// 	worker.on('message', (msg: ThreadedExtractorResult) => {
+// 		console.log(`Extracted ${msg.num_files} files`)
+// 		worker.terminate()
+// 	})
+// }
 
 // for await (const file of Deno.readDir(assetspath)) {
 // 	if (file.name === 'Face-baked.package') continue
@@ -142,14 +155,40 @@ function StartWorker(
 // 	}
 // }
 
-StartWorker({
-	hashes: [HASHES_32, HASHES_64],
-	filepath: 'Objects.package',
-	clean: true,
-	convert: true,
-})
+// StartWorker({
+// 	hashes: [HASHES_32, HASHES_64],
+// 	filepath: 'Objects.package',
+// 	clean: true,
+// 	convert: true,
+// })
 
-// const dbpf = new DBPF(await load('./assets/Objects.package'))
+// const dbpf = new DBPF(await load('./assets/Fonts.package'))
+// console.log(dbpf.getIndexAtHash(0x6240A2A57329C3AAn))
+
+const game = new Game(Deno.env.get('GAME_PATH')!)
+await game.load()
+
+// console.log(
+// 	new LevelXML(
+// 		game.resources.findFile((f) =>
+// 			compare_hash(f.hash, FNV.fromString32('townSquare')) &&
+// 			f.type === 'LevelXml'
+// 		)?.data.toString('utf8')!,
+// 	),
+// )
+
+// Deno.writeTextFileSync(
+// 	'file.json',
+// 	JSON.stringify(
+// 		new WorldXML(
+// 			game.resources.getFile('townSquare.world')?.data.toString('utf8')!,
+// 		).document,
+// 		null,
+// 		4,
+// 	),
+// )
+
+// console.log(new WorldDef(await load('./assets/xml/townSquare.world.xml')))
 
 // const data = await new GameModel(
 // 	dbpf.getIndexByGroupAndHash(0x98DD2593, 1)!.getEntry(),
