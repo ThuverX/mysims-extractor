@@ -26,7 +26,10 @@ export function bitFlags<T extends Record<string, number>>(
 	return turnedOn
 }
 
-export function hash_tostring(num: number | Long, pad?: number): string {
+export function hash_tostring(
+	num: number | bigint | Long,
+	pad?: number,
+): string {
 	if (num instanceof Long) {
 		return `0x` +
 			num.toString(16).padStart(pad ?? 16, '0').toUpperCase()
@@ -40,10 +43,9 @@ export function read_cstring(bf: BinReader): string {
 	let str = ''
 	let offset = bf.position
 	while (bf.buffer[offset] != 0) {
-		str += bf.buffer[offset]
+		str += String.fromCharCode(bf.buffer[offset])
 		offset++
 	}
-
 	bf.position = offset
 	return str
 }

@@ -80,15 +80,26 @@ export class GLTFExporter {
 				.setType('VEC2')
 				.setBuffer(buffer)
 
-			const texture = this.document.createTexture()
-				.setImage(await DDS2PNG(mesh.material.textures['diffuseMap']))
-				.setMimeType('image/png')
+			let material = this.document.createMaterial()
 
-			const material = this.document.createMaterial()
-				.setBaseColorTexture(texture)
-				.setBaseColorFactor([1, 1, 1, 1])
-				.setRoughnessFactor(1)
-				.setMetallicFactor(0)
+			if (mesh.materials[0]?.textures['diffuseMap']) {
+				const texture = this.document.createTexture()
+					.setImage(
+						await DDS2PNG(mesh.materials[0].textures['diffuseMap']),
+					)
+					.setMimeType('image/png')
+
+				material = this.document.createMaterial()
+					.setBaseColorTexture(texture)
+					.setBaseColorFactor([1, 1, 1, 1])
+					.setRoughnessFactor(1)
+					.setMetallicFactor(0)
+			} else {
+				material = material
+					.setBaseColorFactor([1, 1, 1, 1])
+					.setRoughnessFactor(1)
+					.setMetallicFactor(0)
+			}
 
 			const prim = this.document
 				.createPrimitive()

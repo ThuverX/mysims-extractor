@@ -11,6 +11,7 @@ import { Buffer } from 'node:buffer'
 import { MaterialData } from '../../format/materials/materialdata.ts'
 import { TextureParamInfo } from '../../format/materials/materialdata.ts'
 import { GLTFExporter } from '../../export/gltf.ts'
+import { MaterialSet } from '../../format/materials/materialset.ts'
 
 class GameModelMaterial {
 	private mat: MaterialData
@@ -30,15 +31,42 @@ class GameModelMaterial {
 }
 
 class GameModelMesh {
-	public material: GameModelMaterial
+	public materials: Array<GameModelMaterial> = []
 	public vertices: Array<Vertex> = []
 	public faces: Array<Face> = []
 	constructor(private mesh: Mesh, private dbpf: DBPF) {
-		this.material = new GameModelMaterial(
-			dbpf.getIndexByGroupAndHash(mesh.group_hash, mesh.material_hash)
-				?.getEntry()!,
-			this.dbpf,
+		const materialEntry = dbpf.getIndexByGroupAndHash(
+			mesh.group_hash,
+			mesh.material_hash,
 		)
+			?.getEntry()!
+
+		if (materialEntry.index.type === 'Material') {
+			this.materials.push(
+				new GameModelMaterial(
+					materialEntry,
+					this.dbpf,
+				),
+			)
+		} else {
+			const set = new MaterialSet(new BinReader(materialEntry.data))
+			for (const material of set.materials) {
+				const matEntry = dbpf.getIndexByGroupAndHash(
+					material.ref_group,
+					material.ref_hash,
+				)
+					?.getEntry()!
+
+				if (matEntry) {
+					this.materials.push(
+						new GameModelMaterial(
+							matEntry,
+							this.dbpf,
+						),
+					)
+				}
+			}
+		}
 
 		this.vertices = mesh.vertices
 		this.faces = mesh.faces

@@ -42,7 +42,10 @@ export class DBPF {
 
 	constructor(private bf: BinReader, private debug: boolean = true) {
 		this.magic = this.bf.readBytes(4).toString('ascii')
-		assert(this.magic == 'DBPF', 'Invalid magic, expected DBPF')
+		assert(
+			this.magic == 'DBPF',
+			`Invalid magic, expected DBPF got "${this.magic}"`,
+		)
 
 		this.major_version = this.bf.readUInt32()
 		this.minor_version = this.bf.readUInt32()
@@ -67,7 +70,10 @@ export class DBPF {
 		this.bf.position += 4
 		this.bf.position += 24
 
-		assert(this.bf.position == 96, 'Invalid DBPF header size')
+		assert(
+			this.bf.position == 96,
+			`Invalid DBPF header size, expected 96 got ${this.bf.position}`,
+		)
 
 		if (this.debug) this.log_versions()
 		if (this.debug) this.log_stats()

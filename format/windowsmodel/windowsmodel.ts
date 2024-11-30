@@ -48,16 +48,17 @@ struct Face {
 };
 
 struct Bone {
-    padding[48];
+    float ukn[12];
     float x;
     float y;
     float z;
-    padding[4];
+    float ukn2;
 };
 
 struct Rig {
     u32 num_bones;
     u32 bone_hashes[num_bones];
+    Bone bones[num_bones];
 };
 
 struct Mesh {
@@ -106,6 +107,7 @@ struct Header {
     } else {
         padding[1];
     }
+
     u32 num_rigs;
     Rig rigs[num_rigs];
     u32 num_meshes;
@@ -130,13 +132,13 @@ export class WindowsModel {
 		}
 
 		if (num_extra_params != 0) {
-			this.bf.position += 4 // extra params size
+			this.bf.position += 4 // extra_params_size
 			for (let i = 0; i < num_extra_params; i++) {
 				this.params.push(read_cstring(this.bf))
 			}
-		} else {
-			this.bf.position++
 		}
+
+		this.bf.position++
 
 		const num_rigs = this.bf.readUInt32()
 		for (let i = 0; i < num_rigs; i++) {
@@ -179,28 +181,7 @@ export class Mesh {
 		const num_faces = this.bf.readUInt32()
 		const vertex_type = this.bf.readUInt32()
 
-		switch (vertex_type) {
-			case 3: {
-				this.bf.position += 21
-				break
-			}
-			case 4: {
-				this.bf.position += 28
-				break
-			}
-			case 5: {
-				this.bf.position += 35
-				break
-			}
-			case 6: {
-				this.bf.position += 42
-				break
-			}
-			default:
-				throw new Error(
-					`${vertex_type} vertex type not yet implemented`,
-				)
-		}
+		this.bf.position += vertex_type * 7
 
 		this.bf.position += 4 // verts_size
 		for (let i = 0; i < num_verts; i++) {
@@ -243,11 +224,8 @@ export class Vertex {
 }
 
 export class Bone {
-	public hash: number
 	public position: Vector3
 	constructor(private bf: BinReader) {
-		this.hash = this.bf.readUInt32()
-
 		this.bf.position += 48
 
 		this.position = Vector3.read(this.bf)

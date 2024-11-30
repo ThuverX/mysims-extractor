@@ -1,5 +1,6 @@
 import { join } from 'node:path'
-import { GameResources } from './GameResources.ts?='
+import { GameResources } from './GameResources.ts'
+import 'jsr:@std/dotenv/load'
 
 export class Game {
 	public RESOURCE_PATH: string
@@ -22,3 +23,6 @@ export class Game {
 		await this.resources.load()
 	}
 }
+
+export const G = new Game(Deno.env.get('GAME_PATH')!)
+await G.load()

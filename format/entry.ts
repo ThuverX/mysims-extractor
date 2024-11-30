@@ -12,7 +12,7 @@ export class Entry implements Serializer {
 
 	constructor(
 		private bf: BinReader,
-		private index: Index,
+		public index: Index,
 		private dbpf: DBPF,
 	) {
 		this.bf.position = index.offset

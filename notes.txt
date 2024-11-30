@@ -1,0 +1,1 @@
+Looks like sound files in GameData_Win32\Sfx are FNV32, theres a "runtimeSettingOutput.txt" file left over, it seems to contain a log of embedded audio files in these streams
