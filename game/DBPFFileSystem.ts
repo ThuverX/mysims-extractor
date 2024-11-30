@@ -4,7 +4,7 @@ import { HashLike } from '../util.ts'
 import { Index } from '../format/index.ts'
 
 export class DBPFFileSystem extends GameFileSystem {
-	constructor(private dbpf: DBPF) {
+	constructor(private dbpf: DBPF, public path: string) {
 		super()
 	}
 

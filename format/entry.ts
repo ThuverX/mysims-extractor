@@ -33,46 +33,4 @@ export class Entry implements Serializer {
 			index: this.index.serialize(),
 		}
 	}
-
-	public async convert(): Promise<[string, Buffer] | null> {
-		switch (this.index.type) {
-			case 'WindowsModel': {
-				const game_model = new GameModel(this, this.dbpf)
-
-				return [
-					'glb',
-					await game_model.get(),
-				]
-			}
-			case 'CompositeTexture': {
-				return [
-					'dds',
-					this.data,
-				]
-			}
-
-			case 'bnk': {
-				const bnk = new Bnk(new BinReader(this.data))
-
-				return [
-					'wav',
-					await bnk.get(),
-				]
-			}
-
-			case 'Material': {
-				const materialdata = new MaterialData(new BinReader(this.data))
-
-				return [
-					'material.json',
-					Buffer.from(
-						JSON.stringify(materialdata.json(), undefined, 4),
-						'utf8',
-					),
-				]
-			}
-		}
-
-		return null
-	}
 }

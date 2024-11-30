@@ -6,7 +6,7 @@ import { Buffer } from 'node:buffer'
 
 export class VirtualFileSystem extends GameFileSystem {
 	public paths: Map<bigint, FileIndex> = new Map()
-	constructor(paths: Array<[string, string]>) {
+	constructor(paths: Array<[string, string]>, public path: string) {
 		super()
 
 		for (const [real_path, local_path] of paths) {

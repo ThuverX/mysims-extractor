@@ -43,27 +43,10 @@ export async function extract(
 	if (!existsSync(outpath_file)) await Deno.mkdir(outpath_file)
 
 	for (const index of dbpfFile.getIndices()) {
-		let file_type: string = index.type
+		const file_type: string = index.type
 
 		const entry = index.getEntry()
-		let data = entry.data
 		const og_data = Buffer.from(entry.data)
-
-		if (convert) {
-			try {
-				const convert_result = await entry.convert()
-				if (convert_result !== null) {
-					data = convert_result[1]
-					file_type = convert_result[0]
-				}
-			} catch (e) {
-				console.log(
-					`ERROR: ${hash_tostring(index.group)}.${
-						hash_tostring(index.hash)
-					} couldn't be converted ${e}`,
-				)
-			}
-		}
 
 		const outfilename = `${hash_tostring(index.group)}.${
 			hash_tostring(index.hash)
@@ -76,10 +59,7 @@ export async function extract(
 		const fulloutpath_og = join(outpath_file, outfilename_og)
 
 		if (!existsSync(fulloutpath)) {
-			await Deno.writeFile(fulloutpath, data)
-			if (keep_original) {
-				await Deno.writeFile(fulloutpath_og, og_data)
-			}
+			await Deno.writeFile(fulloutpath_og, og_data)
 
 			num_files_extracted++
 		}

@@ -13,3 +13,10 @@ export type Resolver<T> = {
 	path: string
 	resolve: () => T
 }
+
+export interface Color {
+	r: number
+	g: number
+	b: number
+	a?: number
+}

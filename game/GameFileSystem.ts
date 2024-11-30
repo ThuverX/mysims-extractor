@@ -16,6 +16,7 @@ export interface FileEntry {
 }
 
 export abstract class GameFileSystem {
+	abstract path: string
 	abstract getFile(path: HashLike): FileEntry | undefined
 	abstract findFile(
 		predicate: (index: FileIndex) => boolean,

@@ -7,8 +7,7 @@ import { FileIndex, GameFileSystem } from './GameFilesystem.ts'
 import { DBPFFileSystem } from './DBPFFileSystem.ts'
 import { walk } from 'jsr:@std/fs'
 import { VirtualFileSystem } from './VirtualFileSystem.ts'
-import { HashLike } from '../util.ts'
-import { Entry } from '../format/entry.ts'
+import { compare_hash, HashLike } from '../util.ts'
 import { FileEntry } from './GameFileSystem.ts'
 export class GameResources extends GameFileSystem {
 	public FS_LIST: Array<GameFileSystem> = []
@@ -41,6 +40,7 @@ export class GameResources extends GameFileSystem {
 								),
 								false,
 							),
+							file.path,
 						),
 					)
 					console.log(
@@ -68,7 +68,7 @@ export class GameResources extends GameFileSystem {
 			}
 		}
 
-		this.FS_LIST.push(new VirtualFileSystem(system_files))
+		this.FS_LIST.push(new VirtualFileSystem(system_files, path))
 
 		console.log(
 			`[Resources]  (VFS) Loaded ${relative(this.game.GAME_PATH, path)}`,
@@ -89,6 +89,20 @@ export class GameResources extends GameFileSystem {
 			const file = fs.findFile(predicate)
 			if (file) return file
 		}
+	}
+
+	public getFileByGroupAndHash(group: number, hash: HashLike) {
+		return this.findFile((f) =>
+			f.group === group &&
+			compare_hash(f.hash, hash)
+		)
+	}
+
+	public getFileByTypeAndHash(type: string, hash: HashLike) {
+		return this.findFile((f) =>
+			f.type === type &&
+			compare_hash(f.hash, hash)
+		)
 	}
 
 	public override filterFile(
