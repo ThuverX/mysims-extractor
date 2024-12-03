@@ -1,6 +1,7 @@
 import assert from 'node:assert'
 import {
 	Face,
+	Rig,
 	Vertex,
 	WindowsModel,
 } from '../../format/windowsmodel/windowsmodel.ts'
@@ -11,16 +12,17 @@ import { G } from '../Game.ts'
 import { GameMaterial } from '../material/GameMaterial.ts'
 import { MaterialSet } from '../../format/materials/materialset.ts'
 import { GLTFExporter } from '../exporter/GLTFExporter.ts'
-import Long from 'https://deno.land/x/long@v1.0.0/mod.ts'
 
 export class GameMesh {
 	public vertices: Array<Vertex> = []
 	public faces: Array<Face> = []
+	public rig?: Rig
 	public materials: Array<GameMaterial> = []
 
 	constructor(wMesh: Mesh) {
 		this.faces = wMesh.faces
 		this.vertices = wMesh.vertices
+		this.rig = wMesh.rig
 
 		const materialFile = G.resources.getFileByGroupAndHash(
 			wMesh.group_hash,

@@ -46,7 +46,7 @@ class BigEntry {
 	}
 }
 
-class Big {
+export class Big {
 	public magic: string
 	public archive_size: number
 	public entry_count: number // be
@@ -54,13 +54,16 @@ class Big {
 	public entries: Array<BigEntry> = []
 	constructor(private bf: BinReader) {
 		this.magic = this.bf.readBytes(4).toString('ascii')
-		assert(this.magic == 'DBPF')
+		assert(
+			this.magic == 'BIGF',
+			`Expected magic to be "BIGF", but got ${this.magic}`,
+		)
 
 		this.archive_size = this.bf.readUInt32()
 		this.entry_count = swap32(this.bf.readUInt32())
 		this.first_entry = swap32(this.bf.readUInt32())
 
-		for (let i = 0; i < 0; i++) {
+		for (let i = 0; i < this.entry_count - 1; i++) {
 			this.entries.push(new BigEntry(this.bf))
 		}
 	}

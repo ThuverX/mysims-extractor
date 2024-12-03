@@ -18,6 +18,15 @@ export class GLTFExporter {
 	}
 
 	public async export() {
+		await this.convert()
+
+		const io = new DenoIO(Math.random().toString())
+		const data = await io.writeBinary(this.document)
+
+		return Buffer.from(data)
+	}
+
+	public async convert() {
 		this.document = new Document()
 		this.buffer = this.document.createBuffer()
 		this.rootNode = this.document.createNode(
@@ -28,7 +37,7 @@ export class GLTFExporter {
 			const indices = this.getIndices(mesh)
 			const positions = this.getPositions(mesh)
 			const normals = this.getNormals(mesh)
-			const uvs = this.getUvs(mesh)
+			const uvs = this.getUvs(mesh, 0)
 			const materials = await this.getMaterials(mesh)
 
 			let prim = this.document
@@ -45,20 +54,35 @@ export class GLTFExporter {
 			const outMesh = this.document.createMesh('mesh')
 				.addPrimitive(prim)
 
+			const meshNode = this.document.createNode('node')
+				.setMesh(outMesh)
+				.setTranslation([0, 0, 0])
+
 			this.rootNode.addChild(
-				this.document.createNode('node')
-					.setMesh(outMesh)
-					.setTranslation([0, 0, 0]),
+				meshNode,
 			)
+
+			if (mesh.rig) {
+				// const skin = this.document.createSkin()
+				// skin.setSkeleton(meshNode)
+
+				// for (const bone of mesh.rig.bones) {
+				// 	const bonePos = this.document.createNode()
+				// 		.setTranslation([
+				// 			bone.position.x,
+				// 			bone.position.y,
+				// 			bone.position.z,
+				// 		])
+
+				// 	skin.addJoint(bonePos)
+				// }
+			}
 		}
 
 		this.document.createScene('scene')
 			.addChild(this.rootNode)
 
-		const io = new DenoIO(Math.random().toString())
-		const data = await io.writeBinary(this.document)
-
-		return Buffer.from(data)
+		return this.document
 	}
 
 	private async getMaterials(mesh: GameMesh) {
@@ -70,7 +94,7 @@ export class GLTFExporter {
 				.setRoughnessFactor(1)
 				.setMetallicFactor(0)
 				.setAlphaMode('MASK')
-				.setAlphaCutoff(mat.colors?.['transparency'].r ?? 0.5) //not sure if this is right
+				.setAlphaCutoff(0.5) //not sure if this is right
 			if (mat.diffuseColor) {
 				material = material.setBaseColorFactor([
 					mat.diffuseColor.r,
@@ -135,10 +159,10 @@ export class GLTFExporter {
 			.setBuffer(this.buffer)
 	}
 
-	private getUvs(mesh: GameMesh) {
+	private getUvs(mesh: GameMesh, index: number) {
 		const texcoordArray = new Float32Array(
 			mesh.vertices.map(
-				(v) => [v.uv.x, v.uv.y],
+				(v) => [v.uvs[index]?.x ?? 0, v.uvs[index]?.y ?? 0],
 			).flat(),
 		)
 

@@ -46,7 +46,7 @@ export function read_cstring(bf: BinReader): string {
 		str += String.fromCharCode(bf.buffer[offset])
 		offset++
 	}
-	bf.position = offset
+	bf.position = offset + 1
 	return str
 }
 

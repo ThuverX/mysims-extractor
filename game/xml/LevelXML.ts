@@ -1,3 +1,5 @@
+import { G } from '../Game.ts'
+import { GameModel } from '../model/GameModel.ts'
 import { GridValue, LevelDef } from '../world/LevelDef.ts'
 import { XMLParser } from './XMLParser.ts'
 
@@ -13,7 +15,13 @@ export class LevelXML extends XMLParser<LevelDef> {
 					type: 'Model',
 					value: {
 						path: child['#text'],
-						resolve: () => null as any,
+						resolve: () =>
+							new GameModel(
+								G.resources.findFile((f) =>
+									parseInt(child['#text']) === f.group &&
+									f.type === 'WindowsModel'
+								)!,
+							),
 					},
 				})
 			}

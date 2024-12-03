@@ -9,3 +9,6 @@ hashes_64.db
 *.json
 *.glb
 mats.txt
+*.bin
+screenshots/*
+*.WindowsModel
